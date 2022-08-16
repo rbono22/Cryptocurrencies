@@ -1,16 +1,69 @@
 # Cryptocurrencies
 
-## Overview of Project
+## Project Overview
+The purpose of this project is to analyze cryptocurrency data using Unsupervised Machine Learning. The original cryptocurrency data from [CryptoCompare](https://min-api.cryptocompare.com/data/all/coinlist) is preprocessed using Pandas to fit Unsupervised Machine Learning models. A clustering algorithm is used to group data and hvPlot visualization are used to share results.
 
-In this module, You and Martha have done your research. You understand what unsupervised learning is used for, how to process data, how to cluster, how to reduce your dimensions, and how to reduce the principal components using PCA. It’s time to put all these skills to use by creating an analysis for your clients who are preparing to get into the cryptocurrency market.
+## Software
+- Python 3.7
+- scikit-learn 0.24
+- hvPlot 0.7.0
+- Plotly 4.14.3
 
-Martha is a senior manager for the Advisory Services Team at Accountability Accounting, one of your most important clients. Accountability Accounting, a prominent investment bank, is interested in offering a new cryptocurrency investment portfolio for its customers. The company, however, is lost in the vast universe of cryptocurrencies. So, they’ve asked you to create a report that includes what cryptocurrencies are on the trading market and how they could be grouped to create a classification system for this new investment.
+## Results
 
-The data Martha will be working with is not ideal, so it will need to be processed to fit the machine learning models. Since there is no known output for what Martha is looking for, she has decided to use unsupervised learning. To group the cryptocurrencies, Martha decided on a clustering algorithm. She’ll use data visualizations to share her findings with the board.
+### Elbow Curve
 
-## Description of Objectives
+![elbow_curve](https://github.com/Mishkanian/Cryptocurrencies/blob/main/README_images/elbow_curve.png)
 
-* Deliverable 1: Preprocessing the Data for PCA
-* Deliverable 2: Reducing Data Dimensions Using PCA
-* Deliverable 3: Clustering Cryptocurrencies Using K-means
-* Deliverable 4: Visualizing Cryptocurrencies Results
+From the elbow curve above, it can be determined that the optimal number of clusters is 4 (k=4). This information is used for specifying the number of clusters (n_clusters) when initializing the K-means model:
+```python
+model = KMeans(n_clusters=4, random_state=0)
+```
+
+### 3D Plot
+
+![3d_plot](https://github.com/Mishkanian/Cryptocurrencies/blob/main/README_images/3d_plot.png)
+
+This 3D scatter plot with cluster is generated using the following code:
+
+```python
+fig = px.scatter_3d(
+    clustered_df,
+    x="PC 1",
+    y="PC 2",
+    z="PC 3",
+    hover_data=["Algorithm"],
+    hover_name="CoinName",
+    color="Class",
+    symbol="Class",
+    width=800
+)
+fig.update_layout(legend=dict(x=0, y=1))
+fig.show()
+```
+
+### hvTable
+
+![hv_table](https://github.com/Mishkanian/Cryptocurrencies/blob/main/README_images/hv_table.png)
+
+The hvTable above displays all of the currently tradeable cryptocurrencies. This table is created using the hvplot.table() function.
+```python
+columns = ["CoinName", "Algorithm", "ProofType", "TotalCoinSupply", "TotalCoinsMined", "Class"]
+clustered_df.hvplot.table(columns)
+```
+
+### hvPlot (Scatter)
+
+![hv_plot](https://github.com/Mishkanian/Cryptocurrencies/blob/main/README_images/hv_plot.png)
+
+The graph above is a scatter plot grouped by class. This is created using hvplot.scatter. See the code below:
+
+```python
+plot_df.hvplot(
+    kind="scatter", 
+    x="TotalCoinsMined", 
+    y="TotalCoinSupply", 
+    by="Class",
+    hover_cols=["CoinName"]
+)
+```
